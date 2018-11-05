@@ -26,7 +26,7 @@ def _get_words_for_graph(tokens):
         raise ValueError("Can't use both include and exclude filters, should use only one")
 
     result = []
-    for word, unit in tokens.items():
+    for _, unit in tokens.items():
         if exclude_filters and unit.tag in exclude_filters:
             continue
         if (include_filters and unit.tag in include_filters) or not include_filters or not unit.tag:
@@ -84,7 +84,7 @@ def _process_text(graph, tokens, split_text):
 
 def _queue_iterator(queue):
     iterations = queue.qsize()
-    for i in range(iterations):
+    for _ in range(iterations):
         var = queue.get()
         yield var
         queue.put(var)
