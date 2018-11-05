@@ -31,6 +31,7 @@ def _get_words_for_graph(tokens):
             continue
         if (include_filters and unit.tag in include_filters) or not include_filters or not unit.tag:
             result.append(unit.token)
+    
     return result
 
 
@@ -99,7 +100,7 @@ def _extract_tokens(lemmas, scores, ratio, words):
 
     # If no "words" option is selected, the number of sentences is
     # reduced by the provided ratio, else, the ratio is ignored.
-    length = len(lemmas) * ratio if words is None else words
+    length = len(lemmas) * ratio if words is None else min(words, len(lemmas))
     return [(scores[lemmas[i]], lemmas[i],) for i in range(int(length))]
 
 
@@ -184,7 +185,9 @@ def _format_results(_keywords, combined_keywords, split, scores):
     return "\n".join(combined_keywords)
 
 
-def keywords(text, ratio=0.2, words=None, language="english", split=False, scores=False, deaccent=False, additional_stopwords=None):
+def keywords(text, ratio=0.2, words=None, language="english", split=False, 
+             scores=False, deaccent=False, additional_stopwords=None):
+    
     if not isinstance(text, str):
         raise ValueError("Text parameter must be a Unicode object (str)!")
 
