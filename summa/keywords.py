@@ -12,7 +12,7 @@ WINDOW_SIZE = 2
 """Check tags in http://www.clips.ua.ac.be/pages/mbsp-tags and use only first two letters
 Example: filter for nouns and adjectives:
 INCLUDING_FILTER = ['NN', 'JJ']"""
-INCLUDING_FILTER = ['NN', 'JJ']
+INCLUDING_FILTER = ['NN', 'JJ', 'VB']
 EXCLUDING_FILTER = []
 
 
