@@ -241,12 +241,12 @@ def graph(text, language="english", deaccent=False):
 
     print(len(graph.edges()))
 
-    edges = []
+    nodes, edges = graph.nodes(), []
     for node_a, node_b in graph.edges():
         if (node_b, node_a) not in edges and node_a != node_b:
             edges.append((node_a, node_b))
 
     return {
         "nodes": [{"name": node, "token": node, "score": pagerank_scores[node]} for node in graph.nodes()], 
-        "links": [{"source": node_a, "target": node_b} for node_a, node_b in edges]
+        "links": [{"source": nodes.index(node_a), "target": nodes.index(node_b)} for node_a, node_b in edges]
     }
