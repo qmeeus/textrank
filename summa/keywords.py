@@ -220,7 +220,7 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
     return _format_results(keywords, combined_keywords, split, scores)
 
 
-def get_graph(text, language="english", deaccent=False):
+def graph(text, language="english", deaccent=False):
     # Gets a dict of word -> lemma
     tokens = _clean_text_by_word(text)
     split_text = list(_tokenize_by_word(text))
@@ -245,7 +245,7 @@ def get_graph(text, language="english", deaccent=False):
     for node_a, node_b in graph.edges():
         if (node_b, node_a) not in edges and node_a != node_b:
             edges.append((node_a, node_b))
-            
+
     return {
         "nodes": [{"name": node, "token": node, "score": pagerank_scores[node]} for node in graph.nodes()], 
         "links": [{"source": node_a, "target": node_b} for node_a, node_b in edges]
