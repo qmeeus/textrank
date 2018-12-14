@@ -229,11 +229,14 @@ def graph(text, language="english", deaccent=False):
     graph = _build_graph(_get_words_for_graph(tokens))
     _set_graph_edges(graph, tokens, split_text)
 
-    print(graph.edges())
-
     del split_text # It's no longer used
 
     _remove_unreachable_nodes(graph)
+
+    nodes, edges = graph.nodes(), []
+    for node_a, node_b in graph.edges():
+        if (node_b, node_a) not in edges and node_a != node_b:
+            edges.append((node_a, node_b))
 
     # PageRank cannot be run in an empty graph.
     if len(graph.nodes()) == 0:
@@ -242,12 +245,7 @@ def graph(text, language="english", deaccent=False):
     # Ranks the tokens using the PageRank algorithm. Returns dict of lemma -> score
     pagerank_scores = _pagerank(graph)
 
-    nodes, edges = graph.nodes(), []
-    for node_a, node_b in graph.edges():
-        if (node_b, node_a) not in edges and node_a != node_b:
-            edges.append((node_a, node_b))
-
     return {
-        "nodes": [{"name": node, "token": node, "score": pagerank_scores[node]} for node in graph.nodes()], 
+        "nodes": [{"name": tokens[node], "token": node, "score": pagerank_scores[node]} for node in nodes], 
         "links": [{"source": nodes.index(node_a), "target": nodes.index(node_b)} for node_a, node_b in edges]
     }
