@@ -221,10 +221,32 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
 
 
 def get_graph(text, language="english", deaccent=False):
-    tokens = _clean_text_by_word(text, language, deacc=deaccent)
-    split_text = list(_tokenize_by_word(text, deacc=deaccent))
+    # Gets a dict of word -> lemma
+    tokens = _clean_text_by_word(text)
+    split_text = list(_tokenize_by_word(text))
 
+    # Creates the graph and adds the edges
     graph = _build_graph(_get_words_for_graph(tokens))
     _set_graph_edges(graph, tokens, split_text)
+    del split_text # It's no longer used
 
-    return graph
+    _remove_unreachable_nodes(graph)
+
+    # PageRank cannot be run in an empty graph.
+    if len(graph.nodes()) == 0:
+        return []
+
+    # Ranks the tokens using the PageRank algorithm. Returns dict of lemma -> score
+    pagerank_scores = _pagerank(graph)
+
+    print(len(graph.edges()))
+
+    edges = []
+    for node_a, node_b in graph.edges():
+        if (node_b, node_a) not in edges and node_a != node_b:
+            edges.append((node_a, node_b))
+            
+    return {
+        "nodes": [{"name": node, "token": node, "score": pagerank_scores[node]} for node in graph.nodes()], 
+        "links": [{"source": node_a, "target": node_b} for node_a, node_b in edges]
+    }
