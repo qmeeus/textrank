@@ -244,8 +244,9 @@ def graph(text, language="english", deaccent=False):
 
     # Ranks the tokens using the PageRank algorithm. Returns dict of lemma -> score
     pagerank_scores = _pagerank(graph)
+    lemmas_to_word = _lemmas_to_words(tokens)
 
     return {
-        "nodes": [{"name": tokens[node], "token": node, "score": pagerank_scores[node]} for node in nodes], 
+        "nodes": [{"name": lemmas_to_word[node], "token": node, "score": pagerank_scores[node]} for node in nodes], 
         "links": [{"source": nodes.index(node_a), "target": nodes.index(node_b)} for node_a, node_b in edges]
     }
