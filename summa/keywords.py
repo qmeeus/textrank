@@ -228,6 +228,9 @@ def graph(text, language="english", deaccent=False):
     # Creates the graph and adds the edges
     graph = _build_graph(_get_words_for_graph(tokens))
     _set_graph_edges(graph, tokens, split_text)
+
+    print(graph.edges())
+
     del split_text # It's no longer used
 
     _remove_unreachable_nodes(graph)
@@ -238,8 +241,6 @@ def graph(text, language="english", deaccent=False):
 
     # Ranks the tokens using the PageRank algorithm. Returns dict of lemma -> score
     pagerank_scores = _pagerank(graph)
-
-    print(len(graph.edges()))
 
     nodes, edges = graph.nodes(), []
     for node_a, node_b in graph.edges():
