@@ -220,4 +220,5 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
     # text.split() to keep numbers and punctuation marks, so separeted concepts are not combined
     combined_keywords = _get_combined_keywords(keywords, text.split())
 
-    return _format_results(keywords, combined_keywords, split, scores), (original_graph, lemmas_to_word)
+    return (_format_results(keywords, combined_keywords, split, scores), 
+            (original_graph, lemmas_to_word, pagerank_scores))
