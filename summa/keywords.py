@@ -1,5 +1,6 @@
 from itertools import combinations as _combinations
 from queue import Queue
+from copy import deepcopy
 
 from .pagerank_weighted import pagerank_weighted_scipy as _pagerank
 from .preprocessing.textcleaner import clean_text_by_word as _clean_text_by_word
@@ -202,6 +203,8 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
 
     _remove_unreachable_nodes(graph)
 
+    original_graph = deepcopy(graph)
+
     # PageRank cannot be run in an empty graph.
     if len(graph.nodes()) == 0:
         return [] if split else ""
@@ -217,36 +220,4 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
     # text.split() to keep numbers and punctuation marks, so separeted concepts are not combined
     combined_keywords = _get_combined_keywords(keywords, text.split())
 
-    return _format_results(keywords, combined_keywords, split, scores)
-
-
-def graph(text, language="english", deaccent=False):
-    # Gets a dict of word -> lemma
-    tokens = _clean_text_by_word(text)
-    split_text = list(_tokenize_by_word(text))
-
-    # Creates the graph and adds the edges
-    graph = _build_graph(_get_words_for_graph(tokens))
-    _set_graph_edges(graph, tokens, split_text)
-
-    del split_text # It's no longer used
-
-    _remove_unreachable_nodes(graph)
-
-    nodes, edges = graph.nodes(), []
-    for node_a, node_b in graph.edges():
-        if (node_b, node_a) not in edges and node_a != node_b:
-            edges.append((node_a, node_b))
-
-    # PageRank cannot be run in an empty graph.
-    if len(graph.nodes()) == 0:
-        return []
-
-    # Ranks the tokens using the PageRank algorithm. Returns dict of lemma -> score
-    pagerank_scores = _pagerank(graph)
-    lemmas_to_word = _lemmas_to_words(tokens)
-
-    return {
-        "nodes": [{"name": lemmas_to_word[node], "token": node, "score": pagerank_scores[node]} for node in nodes], 
-        "links": [{"source": nodes.index(node_a), "target": nodes.index(node_b)} for node_a, node_b in edges]
-    }
+    return _format_results(keywords, combined_keywords, split, scores), (original_graph, lemmas_to_word)
