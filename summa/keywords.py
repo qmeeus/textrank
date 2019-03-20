@@ -7,6 +7,7 @@ from .preprocessing.textcleaner import clean_text_by_word as _clean_text_by_word
 from .preprocessing.textcleaner import tokenize_by_word as _tokenize_by_word
 from .commons import build_graph as _build_graph
 from .commons import remove_unreachable_nodes as _remove_unreachable_nodes
+from .preprocessing.stopwords import get_stopwords_by_language
 
 WINDOW_SIZE = 2
 
@@ -192,6 +193,8 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
     if not isinstance(text, str):
         raise ValueError("Text parameter must be a Unicode object (str)!")
 
+    text = " ".join([w for w in text.split(" ") if w not in get_stopwords_by_language(language)])  # TODO: QUICKFIX
+
     # Gets a dict of word -> lemma
     tokens = _clean_text_by_word(text, language, deacc=deaccent, additional_stopwords=additional_stopwords)
     split_text = list(_tokenize_by_word(text))
@@ -222,3 +225,12 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
 
     return (_format_results(keywords, combined_keywords, split, scores), 
             (original_graph, lemmas_to_word, pagerank_scores))
+
+
+if __name__ == '__main__':
+    keywords("""
+    Note: when using the categorical_crossentropy loss, your targets should be in categorical format 
+    (e.g. if you have 10 classes, the target for each sample should be a 10-dimensional vector that 
+    is all-zeros except for a 1 at the index corresponding to the class of the sample). In order to 
+    convert integer targets into categorical targets, you can use the Keras utility to_categorical:
+    """)
