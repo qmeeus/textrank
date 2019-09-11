@@ -210,7 +210,7 @@ def keywords(text, ratio=0.2, words=None, language="english", split=False,
 
     # PageRank cannot be run in an empty graph.
     if len(graph.nodes()) == 0:
-        return [] if split else ""
+        raise ValueError("No keyword found")
 
     # Ranks the tokens using the PageRank algorithm. Returns dict of lemma -> score
     pagerank_scores = _pagerank(graph)
